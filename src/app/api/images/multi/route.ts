@@ -4,55 +4,6 @@ import { uploadFile } from "@/services/storage";
 import { validateRequest } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-/**
- * @swagger
- * /api/images/multi:
- *   post:
- *     summary: Upload multiple images
- *     description: Uploads up to 10 image files to Firebase Storage and returns their public URLs.
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         multipart/form-data:
- *           schema:
- *             type: object
- *             properties:
- *               files:
- *                 type: array
- *                 items:
- *                   type: string
- *                   format: binary
- *                 description: The image files to upload (max 10)
- *               path:
- *                 type: string
- *                 description: Optional folder path to store the files
- *     responses:
- *       201:
- *         description: Images uploaded successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 urls:
- *                   type: array
- *                   items:
- *                     type: string
- *                   example: ["https://firebasestorage.googleapis.com/..."]
- *       401:
- *         description: Unauthorized
- *       429:
- *         description: Rate limit exceeded (Max 10 files per IP)
- *       400:
- *         description: No files uploaded or too many files
- *       500:
- *         description: Server error
- */
 export async function POST(request: NextRequest) {
     try {
         if (!validateRequest(request)) {
