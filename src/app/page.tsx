@@ -18,11 +18,6 @@ export default function Home() {
 
   const handleUpload = async (files: File[]) => {
     try {
-      if (!apiKey) {
-        alert("Please enter the API Key first.");
-        return;
-      }
-
       if (files.length === 0) return;
 
       const formData = new FormData();
@@ -143,23 +138,31 @@ export default function Home() {
 
         <main className="space-y-12">
           <div className="max-w-md mx-auto space-y-2">
-            <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
-              <Key className="w-4 h-4" />
-              API Secret Key
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
+                <Key className="w-4 h-4" />
+                API Secret Key
+              </label>
+              <span className="text-xs text-zinc-500">
+                Optional for small uploads
+              </span>
+            </div>
             <div className="relative">
               <input
                 type="password"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
-                placeholder="Enter your API Key to upload/delete..."
+                placeholder="Enter for unlimited uploads & deletion..."
                 className="w-full pl-10 pr-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 focus:ring-2 focus:ring-zinc-500 focus:outline-none transition-all"
               />
               <Lock className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
+            <p className="text-xs text-center text-zinc-500">
+              Free Tier: 10 files/IP • add Key for Unlimited
+            </p>
           </div>
 
-          <section className={!apiKey ? "opacity-50 pointer-events-none grayscale transition-all" : "transition-all"}>
+          <section className="transition-all">
             <FileUpload
               multiple
               onUpload={handleUpload}

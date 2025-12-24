@@ -6,12 +6,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
     try {
-        if (!validateRequest(request)) {
-            return NextResponse.json(
-                { success: false, error: "Unauthorized" },
-                { status: 401 }
-            );
-        }
+        const isAuthenticated = validateRequest(request);
 
         const formData = await request.formData();
         const files = formData.getAll("files") as File[];
@@ -41,11 +36,15 @@ export async function POST(request: NextRequest) {
         }
 
         const ip = request.headers.get("x-forwarded-for") || "unknown";
-        if (!checkRateLimit(ip, files.length)) {
-            return NextResponse.json(
-                { success: false, error: `Rate limit exceeded. Max 10 files per IP. You tried to upload ${files.length}.` },
-                { status: 429 }
-            );
+
+        // If NOT authenticated, check rate limit
+        if (!isAuthenticated) {
+            if (!checkRateLimit(ip, files.length)) {
+                return NextResponse.json(
+                    { success: false, error: `Free tier limit reached. You tried to upload ${files.length} files. Enter API Key for unlimited.` },
+                    { status: 429 }
+                );
+            }
         }
 
         // Upload in parallel
